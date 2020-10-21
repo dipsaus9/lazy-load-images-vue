@@ -1,12 +1,12 @@
 <template>
 	<div>
-		<img v-lazy alt="Vue logo" data-src="./logo.png" />
-		<img v-lazy alt="Vue logo" data-src="./logo2.png" />
-		<img v-lazy alt="Vue logo" data-src="./logo3.png" />
-		<img v-lazy alt="Vue logo" data-src="./logo4.png" />
-		<img v-lazy alt="Vue logo" data-src="./logo5.png" />
-		<img v-lazy alt="Vue logo" data-src="./logo6.png" />
-		<img v-lazy alt="Vue logo" data-src="./logo7.png" />
+		<img lazy-load alt="Vue logo" data-src="./logo.png" />
+		<img lazy-load alt="Vue logo" data-src="./logo2.png" />
+		<img lazy-load alt="Vue logo" data-src="./logo3.png" />
+		<img lazy-load alt="Vue logo" data-src="./logo4.png" />
+		<img lazy-load alt="Vue logo" data-src="./logo5.png" />
+		<img lazy-load alt="Vue logo" data-src="./logo6.png" />
+		<img lazy-load alt="Vue logo" data-src="./logo7.png" />
 	</div>
 </template>
 
@@ -14,7 +14,25 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	name: "App"
+	name: "App",
+	mounted() {
+		const images = document.querySelectorAll("[lazy-load]");
+
+		images.forEach(el => {
+			const imageObserver = new IntersectionObserver(entries => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						const lazyImage = entry.target as HTMLImageElement;
+						if (lazyImage.dataset.src) {
+							lazyImage.src = lazyImage.dataset.src;
+							imageObserver.unobserve(lazyImage);
+						}
+					}
+				});
+			});
+			imageObserver.observe(el);
+		});
+	}
 });
 </script>
 
